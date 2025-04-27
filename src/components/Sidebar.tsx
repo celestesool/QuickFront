@@ -1,16 +1,20 @@
-import React from 'react';
+import React from 'react'; 
 import { ComponentType } from '../types/canvasTypes';
-import { FiSquare, FiType, FiImage, FiLayers, FiMousePointer, FiMinimize2 } from 'react-icons/fi';
-import { BsTextParagraph, BsInputCursorText } from 'react-icons/bs';
+import { FiSquare, FiType, FiImage, FiLayers, FiSave, FiCloud } from 'react-icons/fi';
+import { BsInputCursorText } from 'react-icons/bs';
 import { MdOutlineRectangle } from 'react-icons/md';
 
 interface Props {
   onAdd: (type: ComponentType) => void;
+  onSave: () => void; // función para guardar
+  onOpenProjects: () => void; // función para abrir proyectos
+  onUpdate?: () => void;
   isMobile?: boolean;
+  
 }
 
-const Sidebar: React.FC<Props> = ({ onAdd, isMobile = false }) => {
-  // Estilos base responsivos
+const Sidebar: React.FC<Props> = ({ onAdd, onSave, onOpenProjects, onUpdate, isMobile = false }) => {
+  // Estilos base
   const sidebarStyle: React.CSSProperties = {
     width: isMobile ? '60px' : '240px',
     padding: isMobile ? '0.5rem' : '1rem',
@@ -97,7 +101,6 @@ const Sidebar: React.FC<Props> = ({ onAdd, isMobile = false }) => {
     e.currentTarget.style.backgroundColor = buttonHoverStyle.backgroundColor || '';
   };
 
-  // Componentes disponibles
   const components = [
     { type: 'frame', icon: <FiLayers style={iconStyle} />, label: 'Frame' },
     { type: 'square', icon: <MdOutlineRectangle style={iconStyle} />, label: 'Rectangle' },
@@ -110,7 +113,8 @@ const Sidebar: React.FC<Props> = ({ onAdd, isMobile = false }) => {
   return (
     <div style={sidebarStyle}>
       {!isMobile && <h3 style={headerStyle}>Components</h3>}
-      
+
+      {/* Botones de componentes */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
         {components.map((component) => (
           <button
@@ -128,6 +132,46 @@ const Sidebar: React.FC<Props> = ({ onAdd, isMobile = false }) => {
           </button>
         ))}
       </div>
+
+      {/* Botón para guardar proyecto */}
+      <button
+        onClick={onSave}
+        style={{ ...buttonBaseStyle, marginTop: '1rem', backgroundColor: '#bff2f3', color: 'gray' }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}>
+       <FiSave style={iconStyle} />
+        <span style={buttonTextStyle}>Guardar Proyecto</span>
+      </button>
+      {/* Botón para abrir "Actualizar" */}
+      <button
+        onClick={onUpdate}
+        style={{ ...buttonBaseStyle, marginTop: '8px', backgroundColor: '#d7e2f4', color: 'gray' }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        >
+        <FiCloud style={iconStyle} />
+        <span style={buttonTextStyle}>Actualizar Proyecto</span>
+      </button>
+
+
+      {/* Botón para abrir "Mis Proyectos" */}
+      <button
+        onClick={onOpenProjects}
+        style={{ ...buttonBaseStyle, marginTop: '1rem', backgroundColor: '#c9d0f3', color: 'gray' }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+      >
+        <FiLayers style={iconStyle} />
+        <span style={buttonTextStyle}>Mis Proyectos</span>
+      </button>
+      
+
     </div>
   );
 };
