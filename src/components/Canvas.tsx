@@ -9,6 +9,8 @@ interface Props {
   handleDrag: (id: string, x: number, y: number) => void;
   handleResize: (id: string, width: number, height: number) => void;
   handleRotate: (id: string, rotation: number) => void;
+  onStartDragging: () => void;
+  onStopDragging: () => void;
 }
 
 const Canvas: React.FC<Props> = ({
@@ -17,11 +19,12 @@ const Canvas: React.FC<Props> = ({
   setSelectedId,
   handleDrag,
   handleResize,
-  handleRotate
+  handleRotate,
+  onStartDragging,
+  onStopDragging,
 }) => {
   const canvasRef = useRef<HTMLDivElement | null>(null);
   const targetRef = useRef<HTMLDivElement | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   const [isTransformMode, setIsTransformMode] = useState(false);
 
@@ -30,7 +33,7 @@ const Canvas: React.FC<Props> = ({
       const updateSize = () => {
         setCanvasSize({
           width: canvasRef.current?.clientWidth || 0,
-          height: canvasRef.current?.clientHeight || 0
+          height: canvasRef.current?.clientHeight || 0,
         });
       };
 
@@ -42,7 +45,7 @@ const Canvas: React.FC<Props> = ({
   }, []);
 
   const handleDeselect = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === canvasRef.current && !isDragging) {
+    if (e.target === canvasRef.current) {
       setSelectedId(null);
       setIsTransformMode(false);
     }
@@ -75,7 +78,7 @@ const Canvas: React.FC<Props> = ({
         boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
         margin: '20px',
         minHeight: '600px',
-        minWidth: '600px'
+        minWidth: '600px',
       }}
     >
       {elements.map((el) => {
@@ -100,49 +103,51 @@ const Canvas: React.FC<Props> = ({
               alignItems: 'center',
               justifyContent: 'center',
               pointerEvents: 'auto',
-              border:
-                isSelected && isTransformMode
-                  ? '2px dashed #3a86ff'
-                  : isSelected
-                  ? '1px solid #90e0ef'
-                  : 'none',
-              boxShadow:
-                isSelected && !isTransformMode
-                  ? '0 0 5px rgba(0, 123, 255, 0.3)'
-                  : 'none',
+              border: isSelected && isTransformMode
+                ? '2px dashed #3a86ff'
+                : isSelected
+                ? '1px solid #90e0ef'
+                : 'none',
+              boxShadow: isSelected && !isTransformMode
+                ? '0 0 5px rgba(0, 123, 255, 0.3)'
+                : 'none',
               cursor: isSelected ? 'move' : 'default',
-              boxSizing: 'border-box'
+              boxSizing: 'border-box',
             }}
           >
-            {/* Renderizado seguro por tipo */}
             {el.type === 'button' && (
               <button style={{ width: '100%', height: '100%' }}>{el.content}</button>
             )}
-
             {el.type === 'input' && (
-              <div style={{ width: '100%', height: '100%' }} onMouseDown={(e) => e.preventDefault()}>
+              <div
+                style={{ width: '100%', height: '100%' }}
+                onMouseDown={(e) => e.preventDefault()}
+              >
                 <input
                   placeholder={el.content}
                   style={{ width: '100%', height: '100%', pointerEvents: 'none' }}
                 />
               </div>
             )}
-
             {el.type === 'text' && (
               <p style={{ margin: 0 }}>{el.content}</p>
             )}
-
             {el.type === 'image' && (
-              <img src={el.content} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              <img
+                src={el.content}
+                alt=""
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+              />
             )}
-
             {el.type === 'frame' && (
-              <div style={{
-                width: '100%',
-                height: '100%',
-                backgroundColor: 'rgba(200, 200, 255, 0.1)',
-                border: '1px dashed #999'
-              }} />
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: 'rgba(200, 200, 255, 0.1)',
+                  border: '1px dashed #999',
+                }}
+              />
             )}
           </div>
         );
@@ -159,10 +164,10 @@ const Canvas: React.FC<Props> = ({
             left: 0,
             top: 0,
             right: canvasSize.width,
-            bottom: canvasSize.height
+            bottom: canvasSize.height,
           }}
-          onDragStart={() => setIsDragging(true)}
-          onDragEnd={() => setIsDragging(false)}
+          onDragStart={() => onStartDragging()}
+          onDragEnd={() => onStopDragging()}
           onDrag={({ left, top }) => {
             if (selectedId) handleDrag(selectedId, left, top);
           }}
@@ -173,7 +178,7 @@ const Canvas: React.FC<Props> = ({
               handleResize(selectedId, width, height);
             }
           }}
-          onResize={({ target, width, height, drag }) => {
+          onResize={({ target, width, height }) => {
             if (isTransformMode && selectedId && target) {
               target.style.width = `${width}px`;
               target.style.height = `${height}px`;

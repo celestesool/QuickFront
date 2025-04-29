@@ -1,19 +1,29 @@
-import React from 'react'; 
+import React from 'react';
 import { ComponentType } from '../types/canvasTypes';
-import { FiSquare, FiType, FiImage, FiLayers, FiSave, FiCloud } from 'react-icons/fi';
+import { FiSquare, FiType, FiImage, FiLayers, FiSave, FiCloud, FiLogOut } from 'react-icons/fi';
 import { BsInputCursorText } from 'react-icons/bs';
 import { MdOutlineRectangle } from 'react-icons/md';
 
 interface Props {
   onAdd: (type: ComponentType) => void;
-  onSave: () => void; // función para guardar
-  onOpenProjects: () => void; // función para abrir proyectos
+  onSave: () => void;
+  onOpenProjects: () => void;
   onUpdate?: () => void;
+  onLogout: () => void;
   isMobile?: boolean;
-  
+  setShowJoinProjectModal: (open: boolean) => void; // ✅ importante
 }
 
-const Sidebar: React.FC<Props> = ({ onAdd, onSave, onOpenProjects, onUpdate, isMobile = false }) => {
+const Sidebar: React.FC<Props> = ({
+  onAdd,
+  onSave,
+  onOpenProjects,
+  onUpdate,
+  onLogout,
+  isMobile = false,
+  setShowJoinProjectModal
+}) => {
+
   // Estilos base
   const sidebarStyle: React.CSSProperties = {
     width: isMobile ? '60px' : '240px',
@@ -22,83 +32,38 @@ const Sidebar: React.FC<Props> = ({ onAdd, onSave, onOpenProjects, onUpdate, isM
     borderRight: '1px solid #e5e7eb',
     display: 'flex',
     flexDirection: 'column',
-    transition: 'all 0.2s ease',
     height: '100vh',
     overflowY: 'auto',
     zIndex: 10
   };
 
-  const headerStyle: React.CSSProperties = {
-    margin: '0 0 1rem 0',
-    color: '#374151',
-    fontSize: isMobile ? '0' : '0.875rem',
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-    padding: isMobile ? '0' : '0.5rem 0.75rem',
-    opacity: isMobile ? 0 : 1,
-    transition: 'opacity 0.2s ease',
-    whiteSpace: 'nowrap'
-  };
-
   const buttonBaseStyle: React.CSSProperties = {
-    padding: isMobile ? '0.75rem' : '0.75rem 1rem',
+    padding: isMobile ? '0.2rem' : '0.75rem 1rem',
     border: 'none',
     borderRadius: '6px',
     cursor: 'pointer',
     fontSize: '14px',
     fontWeight: '500',
-    transition: 'all 0.15s ease',
     textAlign: 'left',
-    marginBottom: '4px',
+    marginBottom: isMobile ? '6px' : '4px',
     width: '100%',
     color: '#4b5563',
     display: 'flex',
     alignItems: 'center',
     backgroundColor: 'transparent',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden'
-  };
-
-  const buttonHoverStyle: React.CSSProperties = {
-    backgroundColor: '#f3f4f6',
-    color: '#111827'
-  };
-
-  const buttonActiveStyle: React.CSSProperties = {
-    backgroundColor: '#e5e7eb'
+    transition: 'all 0.2s ease'
   };
 
   const iconStyle: React.CSSProperties = {
     marginRight: isMobile ? '0' : '0.75rem',
-    fontSize: '1.1rem',
-    color: '#6b7280',
-    flexShrink: 0
+    fontSize: isMobile ? '3rem' : '1.2rem',
+    color: '#6b7280'
   };
 
   const buttonTextStyle: React.CSSProperties = {
     opacity: isMobile ? 0 : 1,
-    transition: 'opacity 0.2s ease',
     overflow: 'hidden',
     textOverflow: 'ellipsis'
-  };
-
-  const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.currentTarget.style.backgroundColor = buttonHoverStyle.backgroundColor || '';
-    e.currentTarget.style.color = buttonHoverStyle.color || '';
-  };
-
-  const handleMouseLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.currentTarget.style.backgroundColor = buttonBaseStyle.backgroundColor || '';
-    e.currentTarget.style.color = buttonBaseStyle.color || '';
-  };
-
-  const handleMouseDown = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.currentTarget.style.backgroundColor = buttonActiveStyle.backgroundColor || '';
-  };
-
-  const handleMouseUp = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.currentTarget.style.backgroundColor = buttonHoverStyle.backgroundColor || '';
   };
 
   const components = [
@@ -110,68 +75,67 @@ const Sidebar: React.FC<Props> = ({ onAdd, onSave, onOpenProjects, onUpdate, isM
     { type: 'image', icon: <FiImage style={iconStyle} />, label: 'Image' }
   ];
 
+  const handleShowProjectId = () => {
+    const projectId = localStorage.getItem("currentProjectId");
+    if (projectId) {
+      alert(`Código del proyecto: ${projectId}`);
+    } else {
+      alert("No hay proyecto abierto");
+    }
+  };
+
   return (
     <div style={sidebarStyle}>
-      {!isMobile && <h3 style={headerStyle}>Components</h3>}
+      {!isMobile && <h3 style={{ fontSize: '0.875rem', fontWeight: 600, marginBottom: '1rem' }}>Components</h3>}
 
       {/* Botones de componentes */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-        {components.map((component) => (
-          <button
-            key={component.type}
-            onClick={() => onAdd(component.type as ComponentType)}
-            style={buttonBaseStyle}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleMouseUp}
-            title={isMobile ? component.label : undefined}
-          >
-            {component.icon}
-            <span style={buttonTextStyle}>{component.label}</span>
-          </button>
-        ))}
-      </div>
+      {components.map((comp) => (
+        <button
+          key={comp.type}
+          onClick={() => onAdd(comp.type as ComponentType)}
+          style={buttonBaseStyle}
+          title={isMobile ? comp.label : undefined}
+        >
+          {comp.icon}
+          <span style={buttonTextStyle}>{comp.label}</span>
+        </button>
+      ))}
 
-      {/* Botón para guardar proyecto */}
-      <button
-        onClick={onSave}
-        style={{ ...buttonBaseStyle, marginTop: '1rem', backgroundColor: '#bff2f3', color: 'gray' }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}>
-       <FiSave style={iconStyle} />
+      {/* Guardar Proyecto */}
+      <button onClick={onSave} style={{ ...buttonBaseStyle, marginTop: '1rem', backgroundColor: '#bff2f3', color: 'gray' }}>
+        <FiSave style={iconStyle} />
         <span style={buttonTextStyle}>Guardar Proyecto</span>
       </button>
-      {/* Botón para abrir "Actualizar" */}
-      <button
-        onClick={onUpdate}
-        style={{ ...buttonBaseStyle, marginTop: '8px', backgroundColor: '#d7e2f4', color: 'gray' }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        >
+
+      {/* Actualizar Proyecto */}
+      <button onClick={onUpdate} style={{ ...buttonBaseStyle, backgroundColor: '#d7e2f4', color: 'gray' }}>
         <FiCloud style={iconStyle} />
         <span style={buttonTextStyle}>Actualizar Proyecto</span>
       </button>
 
-
-      {/* Botón para abrir "Mis Proyectos" */}
-      <button
-        onClick={onOpenProjects}
-        style={{ ...buttonBaseStyle, marginTop: '1rem', backgroundColor: '#c9d0f3', color: 'gray' }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-      >
+      {/* Mis Proyectos */}
+      <button onClick={onOpenProjects} style={{ ...buttonBaseStyle, backgroundColor: '#c9d0f3', color: 'gray' }}>
         <FiLayers style={iconStyle} />
         <span style={buttonTextStyle}>Mis Proyectos</span>
       </button>
-      
 
+      {/* Compartir Código */}
+      <button onClick={handleShowProjectId} style={buttonBaseStyle}>
+        📄
+        <span style={buttonTextStyle}>Compartir Código</span>
+      </button>
+
+      {/* Unirse a Proyecto */}
+      <button onClick={() => setShowJoinProjectModal(true)} style={buttonBaseStyle}>
+        🔗
+        <span style={buttonTextStyle}>Unirse a Proyecto</span>
+      </button>
+
+      {/* Cerrar sesión */}
+      <button onClick={onLogout} style={{ ...buttonBaseStyle, marginTop: '1rem', backgroundColor: '#ffffff', color: '#b91c1c', border: '1px solid #b91c1c' }}>
+        <FiLogOut style={{ ...iconStyle, color: '#b91c1c' }} />
+        <span style={{ ...buttonTextStyle, color: '#b91c1c' }}>Cerrar Sesión</span>
+      </button>
     </div>
   );
 };
