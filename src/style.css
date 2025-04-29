@@ -121,9 +121,9 @@ body {
 
 .sidebar-toggle-btn {
   position: fixed;
-  top: 20px;
+  top: 40px;
   left: 20px;
-  background: #617284;
+  background: #2462a4;
   color: white;
   border: none;
   font-size: 22px;
@@ -294,6 +294,23 @@ body {
 
 .join-project-modal button:last-child:hover {
   background-color: #d1d5db;
+}
+.export-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  z-index: 1000;
+}
+
+.export-btn:hover {
+  background-color: #45a049;
 }
 
 

@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSocket } from '../contexts/SocketContext';
 import '../style.css';
 import UserPanel from './UserPanel';
+import { exportToAngular } from './exportUtils';
 
 const initialElements: CanvasComponent[] = [];
 
@@ -112,7 +113,7 @@ const CanvasPage = () => {
       console.error(error);
       alert("Error al actualizar proyecto");
     }
-  };
+    };
 
   const handleAdd = (type: ComponentType) => {
     const newElement: CanvasComponent = {
@@ -279,26 +280,28 @@ const CanvasPage = () => {
     
       <div className="sidebar-desktop">
         <Sidebar
-          onAdd={handleAdd}
-          onSave={handleSaveProject}
-          onOpenProjects={fetchProjects}
-          onUpdate={handleUpdateProject}
-          onLogout={handleLogout}
-          setShowJoinProjectModal={setShowJoinProjectModal}
-        />
+                  onAdd={handleAdd}
+                  onSave={handleSaveProject}
+                  onOpenProjects={fetchProjects}
+                  onUpdate={handleUpdateProject}
+                  onLogout={handleLogout}
+                  setShowJoinProjectModal={setShowJoinProjectModal}
+                 onExportToAngular={() => exportToAngular(elements)}    
+              />
+              
       </div>
 
       {isMobileSidebarOpen && (
         <div className="sidebar-mobile">
           <Sidebar
-            onAdd={handleAdd}
-            onSave={handleSaveProject}
-            onOpenProjects={fetchProjects}
-            onUpdate={handleUpdateProject}
-            onLogout={handleLogout}
-            isMobile
-            setShowJoinProjectModal={setShowJoinProjectModal}
-          />
+                      onAdd={handleAdd}
+                      onSave={handleSaveProject}
+                      onOpenProjects={fetchProjects}
+                      onUpdate={handleUpdateProject}
+                      onLogout={handleLogout}
+                      isMobile
+                      setShowJoinProjectModal={setShowJoinProjectModal}
+                      onExportToAngular={() => exportToAngular(elements)}        />
           <button className="sidebar-close-btn" onClick={() => setMobileSidebarOpen(false)}>✕</button>
         </div>
       )}

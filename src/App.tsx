@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login';
 import Register from './components/Register';
 import CanvasPage from './components/CanvasPage';
+import { exportToAngular } from './components/exportUtils';
+
 
 function App() {
   const isAuthenticated = !!localStorage.getItem('uid');
@@ -29,6 +31,7 @@ function App() {
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
   );
+  
 }
 
 export default App;

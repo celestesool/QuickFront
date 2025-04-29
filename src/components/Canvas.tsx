@@ -83,6 +83,28 @@ const Canvas: React.FC<Props> = ({
     >
       {elements.map((el) => {
         const isSelected = el.id === selectedId;
+        const commonStyles: React.CSSProperties = {
+          position: 'absolute',
+          top: `${el.y}px`,
+          left: `${el.x}px`,
+          width: `${el.width}px`,
+          height: `${el.height}px`,
+          transform: `rotate(${el.rotation || 0}deg)`,
+          zIndex: el.zIndex,
+          ...el.styles,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          pointerEvents: 'auto',
+          boxSizing: 'border-box',
+          border: isSelected && isTransformMode 
+            ? '2px dashed #3a86ff' 
+            : isSelected 
+            ? '1px solid #90e0ef' 
+            : 'none',
+          boxShadow: isSelected && !isTransformMode ? '0 0 5px rgba(0, 123, 255, 0.3)' : 'none',
+          cursor: isSelected ? 'move' : 'default',
+        };
 
         return (
           <div
@@ -90,62 +112,111 @@ const Canvas: React.FC<Props> = ({
             ref={isSelected ? targetRef : null}
             onClick={(e) => handleElementClick(e, el.id)}
             onDoubleClick={(e) => handleElementDoubleClick(e, el.id)}
-            style={{
-              position: 'absolute',
-              top: `${el.y}px`,
-              left: `${el.x}px`,
-              width: `${el.width}px`,
-              height: `${el.height}px`,
-              transform: `rotate(${el.rotation}deg)`,
-              zIndex: el.zIndex,
-              ...el.styles,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              pointerEvents: 'auto',
-              border: isSelected && isTransformMode
-                ? '2px dashed #3a86ff'
-                : isSelected
-                ? '1px solid #90e0ef'
-                : 'none',
-              boxShadow: isSelected && !isTransformMode
-                ? '0 0 5px rgba(0, 123, 255, 0.3)'
-                : 'none',
-              cursor: isSelected ? 'move' : 'default',
-              boxSizing: 'border-box',
-            }}
+            style={commonStyles}
           >
             {el.type === 'button' && (
-              <button style={{ width: '100%', height: '100%' }}>{el.content}</button>
-            )}
-            {el.type === 'input' && (
-              <div
-                style={{ width: '100%', height: '100%' }}
-                onMouseDown={(e) => e.preventDefault()}
+              <button
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: el.styles?.backgroundColor || '#007bff',
+                  color: el.styles?.color || '#ffffff',
+                  fontSize: el.styles?.fontSize || '14px',
+                  fontWeight: el.styles?.fontWeight,
+                  fontStyle: el.styles?.fontStyle,
+                  border: 'none',
+                  borderRadius: el.styles?.borderRadius || '4px',
+                }}
               >
-                <input
-                  placeholder={el.content}
-                  style={{ width: '100%', height: '100%', pointerEvents: 'none' }}
-                />
-              </div>
+                {el.content}
+              </button>
             )}
+
+            {el.type === 'input' && (
+              <input
+                placeholder={el.content}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  pointerEvents: 'none',
+                  border: `solid ${el.styles?.borderWidth || '1px'} ${el.styles?.borderColor || '#ccc'}`,
+                  borderRadius: el.styles?.borderRadius || '4px',
+                  padding: '0 8px',
+                  fontSize: el.styles?.fontSize || '14px',
+                }}
+              />
+            )}
+
             {el.type === 'text' && (
-              <p style={{ margin: 0 }}>{el.content}</p>
+              <p style={{ 
+                margin: 0, 
+                color: el.styles?.color || '#000000',
+                fontSize: el.styles?.fontSize || '14px',
+                fontFamily: el.styles?.fontFamily || 'Arial',
+                fontWeight: el.styles?.fontWeight,
+                fontStyle: el.styles?.fontStyle,
+                textDecoration: el.styles?.textDecoration,
+                textAlign: el.styles?.textAlign || 'left',
+              }}>
+                {el.content}
+              </p>
             )}
+
             {el.type === 'image' && (
               <img
                 src={el.content}
                 alt=""
-                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                style={{ 
+                  width: '100%', 
+                  height: '100%', 
+                  objectFit: el.styles?.objectFit || 'contain',
+                  border: `solid ${el.styles?.borderWidth || '0px'} ${el.styles?.borderColor || 'transparent'}`,
+                }}
               />
             )}
+
             {el.type === 'frame' && (
               <div
                 style={{
                   width: '100%',
                   height: '100%',
-                  backgroundColor: 'rgba(200, 200, 255, 0.1)',
-                  border: '1px dashed #999',
+                  backgroundColor: el.styles?.backgroundColor || 'rgba(200, 200, 255, 0.1)',
+                  border: `${el.styles?.borderWidth || '1px'} ${el.styles?.borderStyle || 'dashed'} ${el.styles?.borderColor || '#999'}`,
+                }}
+              />
+            )}
+
+            {el.type === 'circle' && (
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '50%',
+                  backgroundColor: el.styles?.backgroundColor || '#3a86ff',
+                  border: `${el.styles?.borderWidth || '0px'} solid ${el.styles?.borderColor || 'transparent'}`,
+                }}
+              />
+            )}
+
+            {el.type === 'square' && (
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: el.styles?.backgroundColor || '#3a86ff',
+                  border: `${el.styles?.borderWidth || '0px'} solid ${el.styles?.borderColor || 'transparent'}`,
+                  borderRadius: el.styles?.borderRadius || '0px',
+                }}
+              />
+            )}
+
+            {el.type === 'line' && (
+              <div
+                style={{
+                  width: '100%',
+                  height: `${el.styles?.borderWidth || '2px'}`,
+                  backgroundColor: el.styles?.borderColor || '#000',
+                  transformOrigin: 'left center',
                 }}
               />
             )}
