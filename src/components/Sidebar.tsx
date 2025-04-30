@@ -1,8 +1,12 @@
 import React from 'react';
-import { ComponentType } from '../types/canvasTypes';
-import { FiSquare, FiType, FiImage, FiLayers, FiSave, FiCloud, FiLogOut, FiCircle, FiMinus, FiDownload } from 'react-icons/fi';
+import { ComponentType, CanvasComponent } from '../types/canvasTypes';
+import {
+  FiSquare, FiType, FiImage, FiLayers, FiSave, FiCloud,
+  FiLogOut, FiCircle, FiMinus, FiDownload
+} from 'react-icons/fi';
 import { BsInputCursorText } from 'react-icons/bs';
 import { MdOutlineRectangle } from 'react-icons/md';
+import XmlUpload from './XmlUpload';
 
 interface Props {
   onAdd: (type: ComponentType) => void;
@@ -13,6 +17,8 @@ interface Props {
   isMobile?: boolean;
   onExportToAngular: () => void;
   setShowJoinProjectModal: (open: boolean) => void;
+ onImportXml: (components: CanvasComponent[]) => void;
+
 }
 
 const Sidebar: React.FC<Props> = ({
@@ -23,9 +29,9 @@ const Sidebar: React.FC<Props> = ({
   onLogout,
   isMobile = false,
   setShowJoinProjectModal,
-  onExportToAngular
+  onExportToAngular,
+  onImportXml
 }) => {
-
   const sidebarStyle: React.CSSProperties = {
     width: isMobile ? '60px' : '240px',
     padding: isMobile ? '0.5rem' : '1rem',
@@ -69,12 +75,12 @@ const Sidebar: React.FC<Props> = ({
 
   const components = [
     { type: 'frame', icon: <FiLayers style={iconStyle} />, label: 'Frame' },
-    { type: 'square', icon: <MdOutlineRectangle style={iconStyle} />, label: 'Rectangulo' },
-    { type: 'circle', icon: <FiCircle style={iconStyle} />, label: 'Circulo' },
+    { type: 'square', icon: <MdOutlineRectangle style={iconStyle} />, label: 'Rectángulo' },
+    { type: 'circle', icon: <FiCircle style={iconStyle} />, label: 'Círculo' },
     { type: 'button', icon: <FiSquare style={iconStyle} />, label: 'Botón' },
     { type: 'text', icon: <FiType style={iconStyle} />, label: 'Texto' },
     { type: 'input', icon: <BsInputCursorText style={iconStyle} />, label: 'Input' },
-    { type: 'line', icon: <FiMinus style={iconStyle} />, label: 'Linea' },
+    { type: 'line', icon: <FiMinus style={iconStyle} />, label: 'Línea' },
     { type: 'image', icon: <FiImage style={iconStyle} />, label: 'Imagen' }
   ];
 
@@ -89,7 +95,7 @@ const Sidebar: React.FC<Props> = ({
 
   return (
     <div style={sidebarStyle}>
-      {!isMobile && <h3 style={{ fontSize: '0.875rem', fontWeight: 600, marginBottom: '1rem' }}>Components</h3>}
+      {!isMobile && <h3 style={{ fontSize: '0.875rem', fontWeight: 600, marginBottom: '1rem' }}>Componentes</h3>}
 
       {components.map((comp) => (
         <button
@@ -103,12 +109,16 @@ const Sidebar: React.FC<Props> = ({
         </button>
       ))}
 
-      <button 
-        onClick={onExportToAngular} 
-        style={{ 
-          ...buttonBaseStyle, 
-          marginTop: '1rem', 
-          backgroundColor: '#e0f7fa', 
+      <div style={{ marginTop: '1rem' }}>
+        <XmlUpload onImport={onImportXml} />
+      </div>
+
+      <button
+        onClick={onExportToAngular}
+        style={{
+          ...buttonBaseStyle,
+          marginTop: '1rem',
+          backgroundColor: '#e0f7fa',
           color: '#00796b'
         }}
       >
@@ -116,7 +126,7 @@ const Sidebar: React.FC<Props> = ({
         <span style={buttonTextStyle}>Exportar a Angular</span>
       </button>
 
-      <button onClick={onSave} style={{ ...buttonBaseStyle, marginTop: '1rem', backgroundColor: '#bff2f3', color: 'gray' }}>
+      <button onClick={onSave} style={{ ...buttonBaseStyle, backgroundColor: '#bff2f3', color: 'gray' }}>
         <FiSave style={iconStyle} />
         <span style={buttonTextStyle}>Guardar Proyecto</span>
       </button>
@@ -141,7 +151,15 @@ const Sidebar: React.FC<Props> = ({
         <span style={buttonTextStyle}>Unirse a Proyecto</span>
       </button>
 
-      <button onClick={onLogout} style={{ ...buttonBaseStyle, marginTop: '1rem', backgroundColor: '#ffffff', color: '#b91c1c', border: '1px solid #b91c1c' }}>
+      <button
+        onClick={onLogout}
+        style={{
+          ...buttonBaseStyle,
+          backgroundColor: '#ffffff',
+          color: '#b91c1c',
+          border: '1px solid #b91c1c'
+        }}
+      >
         <FiLogOut style={{ ...iconStyle, color: '#b91c1c' }} />
         <span style={{ ...buttonTextStyle, color: '#b91c1c' }}>Cerrar Sesión</span>
       </button>

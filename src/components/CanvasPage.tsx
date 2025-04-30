@@ -11,7 +11,6 @@ import { useSocket } from '../contexts/SocketContext';
 import '../style.css';
 import UserPanel from './UserPanel';
 import { exportToAngular } from './exportUtils';
-
 const initialElements: CanvasComponent[] = [];
 
 const CanvasPage = () => {
@@ -286,7 +285,12 @@ const CanvasPage = () => {
                   onUpdate={handleUpdateProject}
                   onLogout={handleLogout}
                   setShowJoinProjectModal={setShowJoinProjectModal}
-                 onExportToAngular={() => exportToAngular(elements)}    
+                  onExportToAngular={() => exportToAngular(elements)}
+                  onImportXml={(components) => setElements(prev => [...prev, ...components])}
+
+                  
+                  
+                  
               />
               
       </div>
@@ -301,7 +305,9 @@ const CanvasPage = () => {
                       onLogout={handleLogout}
                       isMobile
                       setShowJoinProjectModal={setShowJoinProjectModal}
-                      onExportToAngular={() => exportToAngular(elements)}        />
+                      onExportToAngular={() => exportToAngular(elements)}
+                      onImportXml={(components) => setElements(prev => [...prev, ...components])}            
+              />
           <button className="sidebar-close-btn" onClick={() => setMobileSidebarOpen(false)}>✕</button>
         </div>
       )}

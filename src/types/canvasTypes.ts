@@ -10,6 +10,8 @@ export interface CanvasComponent {
   rotation?: number;
   zIndex: number;
   content?: string;
+  metadata?: Record<string, any>; // Añade esta línea
+  children?: string[]; // Opcional, si necesitas jerarquía
   styles: {
     backgroundColor?: string;
     backgroundImage?: string; // Para degradados

@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { CanvasComponent } from '../types/canvasTypes';
-import Moveable from 'react-moveable';
+import Moveable from 'react-moveable'; 
 
 interface Props {
   elements: CanvasComponent[];
@@ -174,17 +174,27 @@ const Canvas: React.FC<Props> = ({
                 }}
               />
             )}
-
             {el.type === 'frame' && (
-              <div
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  backgroundColor: el.styles?.backgroundColor || 'rgba(200, 200, 255, 0.1)',
-                  border: `${el.styles?.borderWidth || '1px'} ${el.styles?.borderStyle || 'dashed'} ${el.styles?.borderColor || '#999'}`,
-                }}
-              />
-            )}
+  <div
+    style={{
+      width: '100%',
+            height: '100%',
+            backgroundColor: el.styles?.backgroundColor || '#f9f9fc',
+            border: `1px dashed ${el.styles?.borderColor || '#ccc'}`,
+            padding: '12px',
+            fontFamily: 'Segoe UI, sans-serif',
+            whiteSpace: 'pre-wrap',
+            fontSize: el.styles?.fontSize || 14,
+            color: el.styles?.color || '#000',
+            lineHeight: '1.6',
+            overflowY: 'auto',
+          }}
+        >
+          {el.content?.split('\n').map((line, idx) => (
+            <div key={idx}>{line}</div>
+          ))}
+        </div>
+      )}    
 
             {el.type === 'circle' && (
               <div
